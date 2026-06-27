@@ -3,6 +3,8 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import mongoSanitize from "express-mongo-sanitize";
+
 
 import authRoutes from './routes/auth.routes.js';
 import errorHandler from './middleware/error.middleware.js';
@@ -25,6 +27,16 @@ const limiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: {
+    success: false,
+    message: "Too many authentication attempts. Please try again after 15 minutes.",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 app.use('/api', limiter);
 
 // CORS — allow frontend origin with credentials
@@ -38,11 +50,12 @@ app.use(
 // Body parsers
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(mongoSanitize());
 app.use(cookieParser());
 
-// Routes
-app.use('/api/auth', authRoutes);
 
+// Routes
+app.use("/api/auth", authLimiter, authRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/notifications', notificationRoutes);

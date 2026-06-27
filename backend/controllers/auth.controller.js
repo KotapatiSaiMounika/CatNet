@@ -24,7 +24,7 @@ const sendTokenResponse = (user, statusCode, res, message) => {
   res
     .status(statusCode)
     .cookie('token', token, cookieOptions)
-    .json(new ApiResponse(statusCode, message, { user: userObj, token }));
+    .json(new ApiResponse(statusCode, message, { user: userObj }));
 };
 
 // POST /api/auth/signup
@@ -91,9 +91,11 @@ export const logout = async (req, res, next) => {
 // GET /api/auth/me  (protected)
 export const getMe = async (req, res, next) => {
   try {
-    // req.user is set by the protect middleware
-    const user = await User.findById(req.user._id);
-    res.status(200).json(new ApiResponse(200, 'User fetched successfully.', { user }));
+    res.status(200).json(
+      new ApiResponse(200, "User fetched successfully.", {
+        user: req.user,
+      })
+    );
   } catch (error) {
     next(error);
   }

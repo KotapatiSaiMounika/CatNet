@@ -30,19 +30,27 @@ export const uploadToCloudinary = async (localFilePath, folder = 'catnet') => {
  * Delete an image from Cloudinary by its URL.
  * @param {string} imageUrl - full Cloudinary secure_url
  */
+
+
 export const deleteFromCloudinary = async (imageUrl) => {
   try {
-    if (!imageUrl || !imageUrl.includes('cloudinary')) return;
+    if (!imageUrl || !imageUrl.includes("cloudinary")) return;
 
-    // Extract public_id from URL
-    // URL format: https://res.cloudinary.com/<cloud>/image/upload/v123/<folder>/<public_id>.ext
-    const parts = imageUrl.split('/');
-    const fileWithExt = parts[parts.length - 1];
-    const folder = parts[parts.length - 2];
-    const publicId = `${folder}/${fileWithExt.split('.')[0]}`;
+    const uploadIndex = imageUrl.indexOf("/upload/");
+
+    if (uploadIndex === -1) return;
+
+    // Everything after /upload/
+    let publicId = imageUrl.substring(uploadIndex + 8);
+
+    // Remove version (e.g. v1712345678/)
+    publicId = publicId.replace(/^v\d+\//, "");
+
+    // Remove file extension
+    publicId = publicId.replace(/\.[^/.]+$/, "");
 
     await cloudinary.uploader.destroy(publicId);
   } catch (error) {
-    console.error('Cloudinary delete error:', error.message);
+    console.error("Cloudinary delete error:", error.message);
   }
 };
