@@ -20,7 +20,8 @@ import {
   CatLogo,
 } from "@/components/sections/CatIllustrations";
 import { CatCard } from "@/components/cards/CatCard";
-import { generateCats } from "@/lib/cats";
+import { useQuery } from "@tanstack/react-query";
+import { postsApi } from "@/lib/posts";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -81,8 +82,26 @@ function Stat({ value, label, suffix = "" }: { value: number; label: string; suf
 }
 
 function Landing() {
-  const lostCats = generateCats(4, "missing");
-  const adoptCats = generateCats(4, "adoption");
+  const { data: lostData } = useQuery({
+  queryKey: ["home-lost"],
+  queryFn: () =>
+    postsApi.getPosts({
+      category: "Lost",
+      limit: 4,
+    }),
+});
+
+const { data: adoptData } = useQuery({
+  queryKey: ["home-adoption"],
+  queryFn: () =>
+    postsApi.getPosts({
+      category: "Adoption",
+      limit: 4,
+    }),
+});
+
+const lostCats = lostData?.posts ?? [];
+const adoptCats = adoptData?.posts ?? [];
 
   return (
     <>
@@ -487,9 +506,9 @@ function Landing() {
           </div>
 
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {lostCats.map((c) => (
-              <CatCard key={c.id} cat={c} />
-            ))}
+            {lostCats.map((post) => (
+  <CatCard key={post._id} cat={post} />
+))}
           </div>
         </div>
       </section>
@@ -515,9 +534,9 @@ function Landing() {
             </Link>
           </div>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {adoptCats.map((c) => (
-              <CatCard key={c.id} cat={c} />
-            ))}
+            {adoptCats.map((post) => (
+  <CatCard key={post._id} cat={post} />
+))}
           </div>
         </div>
       </section>

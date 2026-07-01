@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Search, SlidersHorizontal } from "lucide-react";
-import { CatCard } from "@/components/cards/CatCard";
-import { PageHero } from "@/components/sections/PageHero";
-import { generateCats } from "@/lib/cats";
+import { useQuery } from "@tanstack/react-query";
+
+import { CatCard } from "../components/cards/CatCard";
+import { PageHero } from "../components/sections/PageHero";
+import { getPosts } from "@/lib/posts";
 
 export const Route = createFileRoute("/lost")({
   head: () => ({
@@ -28,7 +30,12 @@ const filters = [
 ];
 
 function LostCats() {
-  const cats = generateCats(12, "missing");
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["posts", "Lost"],
+    queryFn: () => postsApi.getPosts({ category: "Lost" }),
+  });
+
+  const posts = data?.posts ?? [];
 
   return (
     <>
@@ -36,7 +43,8 @@ function LostCats() {
         eyebrow="Lost cats"
         title={
           <>
-            Have you seen this <span className="text-gradient">whiskered friend?</span>
+            Have you seen this{" "}
+            <span className="text-gradient">whiskered friend?</span>
           </>
         }
         description="Browse cats reported missing in your area. Every set of eyes brings someone closer to home."
@@ -54,11 +62,12 @@ function LostCats() {
       </PageHero>
 
       <section className="mx-auto max-w-7xl px-6 pb-24">
-        {/* Filters */}
         <div className="mb-10 flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-bold shadow-soft">
-            <SlidersHorizontal className="h-3.5 w-3.5" /> Filters
+            <SlidersHorizontal className="h-3.5 w-3.5" />
+            Filters
           </span>
+
           {filters.map((f) => (
             <button
               key={f.label}
@@ -70,9 +79,24 @@ function LostCats() {
           ))}
         </div>
 
+        {isLoading && (
+          <div className="text-center py-10">
+            Loading...
+          </div>
+        )}
+
+        {error && (
+          <div className="text-center py-10 text-red-500">
+            Failed to load posts.
+          </div>
+        )}
+
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {cats.map((c) => (
-            <CatCard key={c.id} cat={c} />
+          {posts.map((post) => (
+            <CatCard
+              key={post._id}
+              cat={post}
+            />
           ))}
         </div>
       </section>

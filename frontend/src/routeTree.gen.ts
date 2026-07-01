@@ -9,8 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as LostRouteImport } from './routes/lost'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as FoundRouteImport } from './routes/found'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as AiMatchRouteImport } from './routes/ai-match'
@@ -18,6 +20,11 @@ import { Route as AdoptionRouteImport } from './routes/adoption'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MapRoute = MapRouteImport.update({
   id: '/map',
   path: '/map',
@@ -26,6 +33,11 @@ const MapRoute = MapRouteImport.update({
 const LostRoute = LostRouteImport.update({
   id: '/lost',
   path: '/lost',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FoundRoute = FoundRouteImport.update({
@@ -66,8 +78,10 @@ export interface FileRoutesByFullPath {
   '/ai-match': typeof AiMatchRoute
   '/community': typeof CommunityRoute
   '/found': typeof FoundRoute
+  '/login': typeof LoginRoute
   '/lost': typeof LostRoute
   '/map': typeof MapRoute
+  '/signup': typeof SignupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -76,8 +90,10 @@ export interface FileRoutesByTo {
   '/ai-match': typeof AiMatchRoute
   '/community': typeof CommunityRoute
   '/found': typeof FoundRoute
+  '/login': typeof LoginRoute
   '/lost': typeof LostRoute
   '/map': typeof MapRoute
+  '/signup': typeof SignupRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -87,8 +103,10 @@ export interface FileRoutesById {
   '/ai-match': typeof AiMatchRoute
   '/community': typeof CommunityRoute
   '/found': typeof FoundRoute
+  '/login': typeof LoginRoute
   '/lost': typeof LostRoute
   '/map': typeof MapRoute
+  '/signup': typeof SignupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -99,8 +117,10 @@ export interface FileRouteTypes {
     | '/ai-match'
     | '/community'
     | '/found'
+    | '/login'
     | '/lost'
     | '/map'
+    | '/signup'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -109,8 +129,10 @@ export interface FileRouteTypes {
     | '/ai-match'
     | '/community'
     | '/found'
+    | '/login'
     | '/lost'
     | '/map'
+    | '/signup'
   id:
     | '__root__'
     | '/'
@@ -119,8 +141,10 @@ export interface FileRouteTypes {
     | '/ai-match'
     | '/community'
     | '/found'
+    | '/login'
     | '/lost'
     | '/map'
+    | '/signup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -130,12 +154,21 @@ export interface RootRouteChildren {
   AiMatchRoute: typeof AiMatchRoute
   CommunityRoute: typeof CommunityRoute
   FoundRoute: typeof FoundRoute
+  LoginRoute: typeof LoginRoute
   LostRoute: typeof LostRoute
   MapRoute: typeof MapRoute
+  SignupRoute: typeof SignupRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/map': {
       id: '/map'
       path: '/map'
@@ -148,6 +181,13 @@ declare module '@tanstack/react-router' {
       path: '/lost'
       fullPath: '/lost'
       preLoaderRoute: typeof LostRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/found': {
@@ -202,8 +242,10 @@ const rootRouteChildren: RootRouteChildren = {
   AiMatchRoute: AiMatchRoute,
   CommunityRoute: CommunityRoute,
   FoundRoute: FoundRoute,
+  LoginRoute: LoginRoute,
   LostRoute: LostRoute,
   MapRoute: MapRoute,
+  SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

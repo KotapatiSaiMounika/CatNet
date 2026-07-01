@@ -1,7 +1,17 @@
-import { Link, useRouterState } from "@tanstack/react-router";
-import { Bell, Moon, Search, Sun } from "lucide-react";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { Bell, LogOut, Moon, Search, Sun, User as UserIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CatLogo } from "../sections/CatIllustrations";
+import { useAuth } from "@/context/AuthContext";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const links = [
   { to: "/", label: "Home" },
@@ -16,8 +26,15 @@ const links = [
 
 export function Navbar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
+  const { user, isAuthenticated, logout } = useAuth();
   const [dark, setDark] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const handleLogout = async () => {
+    await logout();
+    navigate({ to: "/" });
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -81,13 +98,17 @@ export function Navbar() {
             >
               <Search className="h-4 w-4" />
             </button>
-            <button
-              aria-label="Notifications"
-              className="relative grid h-9 w-9 place-items-center rounded-full text-muted-foreground hover:bg-white/60 hover:text-foreground"
-            >
-              <Bell className="h-4 w-4" />
-              <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-coral" />
-            </button>
+
+            {isAuthenticated && (
+              <Link
+                to="/notifications"
+                aria-label="Notifications"
+                className="relative grid h-9 w-9 place-items-center rounded-full text-muted-foreground hover:bg-white/60 hover:text-foreground"
+              >
+                <Bell className="h-4 w-4" />
+              </Link>
+            )}
+
             <button
               aria-label="Toggle theme"
               onClick={() => setDark((v) => !v)}
@@ -95,9 +116,53 @@ export function Navbar() {
             >
               {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
-            <div className="ml-1 grid h-9 w-9 place-items-center overflow-hidden rounded-full gradient-warm shadow-soft">
-              <CatLogo size={26} />
-            </div>
+
+            {isAuthenticated && user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    aria-label="Account menu"
+                    className="ml-1 grid h-9 w-9 place-items-center overflow-hidden rounded-full gradient-warm shadow-soft"
+                  >
+                    <Avatar className="h-9 w-9">
+                      <AvatarImage src={user.profileImage} alt={user.name} />
+                      <AvatarFallback className="bg-transparent text-xs font-bold text-primary-foreground">
+                        {user.name.slice(0, 1).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuLabel className="truncate">{user.name}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile/$userId" params={{ userId: user._id }}>
+                      <UserIcon className="mr-2 h-4 w-4" />
+                      My profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Log out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div className="ml-1 flex items-center gap-1.5">
+                <Link
+                  to="/login"
+                  className="rounded-full px-3.5 py-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground"
+                >
+                  Log in
+                </Link>
+                <Link
+                  to="/signup"
+                  className="btn-bounce rounded-full gradient-primary px-3.5 py-1.5 text-sm font-bold text-primary-foreground shadow-soft"
+                >
+                  Sign up
+                </Link>
+              </div>
+            )}
           </div>
         </nav>
       </div>

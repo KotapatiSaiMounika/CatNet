@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { AuthProvider } from "@/context/AuthContext";
 import { CatLogo } from "@/components/sections/CatIllustrations";
 import { AmbientStickers } from "@/components/sections/Stickers";
 
@@ -138,16 +139,18 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="relative min-h-screen overflow-x-clip">
-        <AmbientStickers />
-        <div className="relative z-10">
-          <Navbar />
-          <main>
-            <Outlet />
-          </main>
-          <Footer />
+      <AuthProvider>
+        <div className="relative min-h-screen overflow-x-clip">
+          <AmbientStickers />
+          <div className="relative z-10">
+            <Navbar />
+            <main>
+              <Outlet />
+            </main>
+            <Footer />
+          </div>
         </div>
-      </div>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
