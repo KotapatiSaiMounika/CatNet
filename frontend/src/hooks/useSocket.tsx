@@ -34,11 +34,8 @@ export function useSocket(
 
       socketRef.current = socket;
 
-      socket.on('connect', () => {
-        // Register this socket to the user's room so the server can
-        // target real-time events (notifications) to this user.
-        socket.emit('register', user._id);
-      });
+      // The server authenticates the connection via the httpOnly JWT
+      // cookie and joins this socket to the user's own room automatically.
 
       if (onNotification) {
         socket.on('notification', onNotification);

@@ -1,5 +1,6 @@
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
 import ApiError from '../utils/ApiError.js';
 
 const storage = multer.diskStorage({
@@ -29,3 +30,49 @@ export const upload = multer({
   fileFilter,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
 });
+
+// ── Content-based verification ──────────────────────────────────────────
+// multer's fileFilter above only sees the client-supplied extension and
+// mimetype header, both of which are trivial to spoof (e.g. rename a
+// script to photo.png). This middleware runs *after* the file has been
+// written to disk and checks its actual byte signature, so a disguised
+// non-image file gets rejected and deleted before it ever reaches
+// Cloudinary or the database.
+const SIGNATURES = [
+  { type: 'jpeg', bytes: [0xff, 0xd8, 0xff] },
+  { type: 'png',  bytes: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a] },
+];
+
+const isValidWebp = (buffer) =>
+  buffer.length >= 12 &&
+  buffer.toString('ascii', 0, 4) === 'RIFF' &&
+  buffer.toString('ascii', 8, 12) === 'WEBP';
+
+const matchesSignature = (buffer) =>
+  SIGNATURES.some(
+    (sig) =>
+      buffer.length >= sig.bytes.length &&
+      sig.bytes.every((byte, i) => buffer[i] === byte)
+  ) || isValidWebp(buffer);
+
+export const verifyImageSignature = (req, res, next) => {
+  if (!req.file) return next();
+
+  fs.open(req.file.path, 'r', (openErr, fd) => {
+    if (openErr) return next(openErr);
+
+    const buffer = Buffer.alloc(12);
+    fs.read(fd, buffer, 0, 12, 0, (readErr) => {
+      fs.close(fd, () => {});
+      if (readErr) return next(readErr);
+
+      if (!matchesSignature(buffer)) {
+        fs.unlink(req.file.path, () => {});
+        return next(
+          new ApiError(400, 'File content does not match an allowed image type.')
+        );
+      }
+      next();
+    });
+  });
+};

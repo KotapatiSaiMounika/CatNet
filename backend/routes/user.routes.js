@@ -9,7 +9,7 @@ import {
 import { getSavedPosts } from '../controllers/save.controller.js';
 import { updateProfileValidator } from '../validators/user.validator.js';
 import { protect } from '../middleware/auth.middleware.js';
-import { upload } from '../middleware/upload.middleware.js';
+import { upload, verifyImageSignature } from '../middleware/upload.middleware.js';
 
 const router = express.Router();
 
@@ -22,6 +22,7 @@ router.post(
   '/profile/image',
   protect,
   upload.single('profileImage'),
+  verifyImageSignature,
   updateProfileImage
 );
 

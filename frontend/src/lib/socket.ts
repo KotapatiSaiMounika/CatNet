@@ -6,19 +6,18 @@ let socket: Socket | null = null;
 
 /**
  * Lazily creates (or returns) the singleton socket connection.
- * Call connectSocket(userId) after a successful login/me fetch,
+ * Call connectSocket() after a successful login/me fetch,
  * and disconnectSocket() on logout.
  */
-export function connectSocket(userId: string): Socket {
+export function connectSocket(): Socket {
   if (socket?.connected) return socket;
 
+  // The server authenticates the connection using the httpOnly JWT cookie
+  // and joins the caller to their own notification room automatically —
+  // no userId is sent from the client.
   socket = io(SOCKET_URL, {
     withCredentials: true,
     autoConnect: true,
-  });
-
-  socket.on("connect", () => {
-    socket?.emit("register", userId);
   });
 
   return socket;

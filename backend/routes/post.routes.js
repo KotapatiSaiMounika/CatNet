@@ -17,7 +17,7 @@ import { toggleLike } from '../controllers/like.controller.js';
 import { toggleSave } from '../controllers/save.controller.js';
 import { createPostValidator, updatePostValidator } from '../validators/post.validator.js';
 import { protect } from '../middleware/auth.middleware.js';
-import { upload } from '../middleware/upload.middleware.js';
+import { upload, verifyImageSignature } from '../middleware/upload.middleware.js';
 
 const router = express.Router();
 
@@ -29,6 +29,7 @@ router.post(
   '/',
   protect,
   upload.single('catImage'),
+  verifyImageSignature,
   createPostValidator,
   createPost
 );
@@ -36,6 +37,7 @@ router.put(
   '/:id',
   protect,
   upload.single('catImage'),
+  verifyImageSignature,
   updatePostValidator,
   updatePost
 );

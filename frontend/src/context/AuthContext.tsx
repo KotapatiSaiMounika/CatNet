@@ -38,11 +38,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
 
     (async () => {
-      const me = await getMeRequest();
-      if (cancelled) return;
-      setUser(me);
-      if (me) connectSocket(me._id);
-      setIsLoading(false);
+      try {
+        const me = await getMeRequest();
+
+        if (cancelled) return;
+
+        setUser(me);
+
+        if (me) {
+          connectSocket();
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      }
     })();
 
     return () => {
@@ -52,14 +62,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(async (input: LoginInput) => {
     const loggedInUser = await loginRequest(input);
+
     setUser(loggedInUser);
-    connectSocket(loggedInUser._id);
+
+    // The server authenticates the socket using the httpOnly JWT cookie.
+    connectSocket();
   }, []);
 
   const signup = useCallback(async (input: SignupInput) => {
     const newUser = await signupRequest(input);
+
     setUser(newUser);
-    connectSocket(newUser._id);
+
+    // The server authenticates the socket using the httpOnly JWT cookie.
+    connectSocket();
   }, []);
 
   const logout = useCallback(async () => {
@@ -93,6 +109,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within an AuthProvider");
+
+  if (!ctx) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+
   return ctx;
 }

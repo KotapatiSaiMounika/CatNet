@@ -9,7 +9,9 @@ import { uploadToCloudinary, deleteFromCloudinary } from '../utils/cloudinaryUpl
 // Public — anyone can view a profile
 export const getUserProfile = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id);
+    // Exclude email — this is a public endpoint, viewable by anyone,
+    // and email is not needed for a public profile view.
+    const user = await User.findById(req.params.id).select('-email');
     if (!user) return next(new ApiError(404, 'User not found.'));
 
     // Return post count alongside profile
