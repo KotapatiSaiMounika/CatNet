@@ -1,0 +1,67 @@
+# CatNet AI Match Service
+
+Small FastAPI microservice that powers the **AI Match** feature: upload a
+photo of a cat, and CatNet finds visually similar Lost/Found posts.
+
+## How it works
+
+This is a **photo re-identification** system, not a classifier. There's no
+labelled dataset of "these two photos are the same cat", so instead of
+training a classifier from scratch we use **MobileNetV2** (pretrained on
+ImageNet) as a fixed feature extractor:
+
+1. Strip MobileNetV2's classification head, keep the convolutional base.
+2. Run a cat photo through it, global-average-pool the output → a 1280-number
+   vector ("embedding") that summarizes the photo's visual content (fur
+   pattern, colors, shape, markings).
+3. Two photos of the *same* cat produce embeddings that are close together
+   (measured with cosine similarity). Photos of different cats end up
+   farther apart.
+4. No training step is required — this is the standard approach for
+   visual-search / re-identification problems (same idea used by reverse
+   image search and face-matching systems), and it's why this could be built
+   in a day instead of weeks.
+
+If you later collect a labelled dataset of confirmed cat-photo matches, you
+could fine-tune the base model with triplet loss for better accuracy — the
+rest of the system (storage, similarity search, API) wouldn't need to
+change. That's a good "v2" if you want to keep improving this for your
+resume/portfolio.
+
+## Setup
+
+```bash
+cd ai-service
+python -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+```
+
+First run downloads the MobileNetV2 weights (~14MB) from
+`storage.googleapis.com` — needs internet access once, then it's cached
+locally by Keras.
+
+Check it's alive: `curl http://localhost:8000/health` → `{"status":"ok"}`
+
+## Endpoints
+
+| Method | Path          | Body                              | Returns                     |
+|--------|---------------|------------------------------------|------------------------------|
+| GET    | `/health`     | –                                   | `{"status": "ok"}`          |
+| POST   | `/embed`      | multipart file (`file`)            | `{"embedding": [1280 floats]}` |
+| POST   | `/embed-url`  | JSON `{"url": "https://..."}`      | `{"embedding": [1280 floats]}` |
+| POST   | `/similarity` | JSON `{"a": [...], "b": [...]}`    | `{"similarity": 0.0-1.0}`   |
+
+The Node backend calls `/embed-url` right after a Lost/Found post's photo is
+uploaded to Cloudinary (see `backend/services/aiMatch.service.js`), and calls
+`/embed` when a user runs an AI Match search with a fresh photo they just
+uploaded (that photo is never stored — only its embedding is used, in
+memory, for that one request).
+
+## Deploying alongside the backend
+
+Set `AI_SERVICE_URL` in the backend's `.env` to wherever this service runs
+(e.g. `http://localhost:8000` locally, or its deployed URL in production —
+Render/Railway/Fly.io all work fine for a small FastAPI + TensorFlow-CPU
+service like this).
