@@ -1,5 +1,6 @@
 import { api } from "@/lib/api";
 import type {
+  AiMatchData,
   ApiResponse,
   Comment,
   CommentsListData,
@@ -56,6 +57,28 @@ export async function updatePost(
 
 export async function deletePost(id: string): Promise<void> {
   await api.delete(`/posts/${id}`);
+}
+
+// Upload a photo and get back the closest Lost/Found posts by visual
+// similarity (AI Match). `category` narrows the search — e.g. pass "Found"
+// when someone lost their cat and wants to search posts *other people*
+// found, or omit it to search both.
+export async function matchByPhoto(
+  photo: File,
+  category?: "Lost" | "Found"
+): Promise<AiMatchData> {
+  const formData = new FormData();
+  formData.append("photo", photo);
+
+  const res = await api.post<ApiResponse<AiMatchData>>(
+    "/posts/ai-match",
+    formData,
+    {
+      headers: { "Content-Type": "multipart/form-data" },
+      params: category ? { category } : undefined,
+    }
+  );
+  return res.data.data;
 }
 
 export async function toggleLike(
@@ -138,4 +161,5 @@ export const postsApi = {
   addComment,
   editComment,
   deleteComment,
+  matchByPhoto,
 };

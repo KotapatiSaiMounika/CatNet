@@ -54,6 +54,17 @@ const postSchema = new mongoose.Schema(
         ref: 'User',
       },
     ],
+    // 1280-dim MobileNetV2 feature vector for the AI Match (photo
+    // re-identification) feature. Populated best-effort after image
+    // upload — see backend/services/aiMatch.service.js. `select: false`
+    // keeps it out of normal list/detail responses (it's large and the
+    // client never needs the raw numbers); the AI match search query
+    // explicitly opts back in with `.select('+embedding')`.
+    embedding: {
+      type: [Number],
+      default: undefined,
+      select: false,
+    },
   },
   { timestamps: true }
 );

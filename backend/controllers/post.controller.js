@@ -4,6 +4,21 @@ import ApiError from '../utils/ApiError.js';
 import ApiResponse from '../utils/ApiResponse.js';
 import { uploadToCloudinary, deleteFromCloudinary } from '../utils/cloudinaryUpload.js';
 import Comment from '../models/Comment.js';
+import { getEmbeddingFromUrl } from '../services/aiMatch.service.js';
+
+// Compute an AI Match embedding for a freshly-uploaded photo. This is
+// best-effort: if the AI microservice is down or slow, post creation must
+// still succeed — the post will just be missing from AI Match search
+// results until it's edited again (or the embedding backfilled).
+const tryGetEmbedding = async (imageUrl) => {
+  if (!imageUrl) return undefined;
+  try {
+    return await getEmbeddingFromUrl(imageUrl);
+  } catch (err) {
+    console.error('AI Match: failed to compute embedding —', err.message);
+    return undefined;
+  }
+};
 
 
 // ─── GET /api/posts ──────────────────────────────────────────────────────────
@@ -99,10 +114,16 @@ export const createPost = async (req, res, next) => {
     }
 
     // Upload image if provided
+    // Upload image if provided
     let catImage = '';
     if (req.file) {
       catImage = await uploadToCloudinary(req.file.path, 'catnet/posts');
     }
+
+    // Only Lost/Found posts are searchable via AI Match — no point paying
+    // for an embedding on an Adoption listing.
+    const embedding =
+      catImage && category !== 'Adoption' ? await tryGetEmbedding(catImage) : undefined;
 
     const post = await Post.create({
       title,
@@ -112,6 +133,7 @@ export const createPost = async (req, res, next) => {
       location,
       contactInfo,
       createdBy: req.user._id,
+      embedding,
     });
 
     await post.populate('createdBy', 'name profileImage location');
@@ -150,17 +172,32 @@ export const updatePost = async (req, res, next) => {
     }
 
     // Replace image if a new one is uploaded
+    // Replace image if a new one is uploaded
     let catImage = post.catImage;
+    let newEmbedding;
+    let photoChanged = false;
     if (req.file) {
       await deleteFromCloudinary(post.catImage);
       catImage = await uploadToCloudinary(req.file.path, 'catnet/posts');
+      photoChanged = true;
+      // Recompute the embedding for the new photo (Lost/Found only).
+      newEmbedding = category !== 'Adoption' ? await tryGetEmbedding(catImage) : undefined;
     }
 
-    const updated = await Post.findByIdAndUpdate(
-      req.params.id,
-      { title, description, category, contactInfo, location, catImage },
-      { new: true, runValidators: true }
-    ).populate('createdBy', 'name profileImage location');
+    const setFields = { title, description, category, contactInfo, location, catImage };
+    if (photoChanged && newEmbedding) setFields.embedding = newEmbedding;
+
+    const updateOp = { $set: setFields };
+    // Clear a stale embedding if the photo changed but re-embedding failed,
+    // or the post was switched to Adoption (no longer AI-Match searchable).
+    if ((photoChanged && !newEmbedding) || category === 'Adoption') {
+      updateOp.$unset = { embedding: 1 };
+    }
+
+    const updated = await Post.findByIdAndUpdate(req.params.id, updateOp, {
+      new: true,
+      runValidators: true,
+    }).populate('createdBy', 'name profileImage location');
 
     res.status(200).json(new ApiResponse(200, 'Post updated successfully.', { post: updated }));
   } catch (error) {

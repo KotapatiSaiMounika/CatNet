@@ -92,6 +92,17 @@ export interface PostsListData {
   pagination: Pagination;
 }
 
+// A post returned by the AI Match photo search, with its visual similarity
+// score (0-100) against the uploaded query photo attached.
+export interface AiMatchResult extends Post {
+  matchScore: number;
+}
+
+export interface AiMatchData {
+  matches: AiMatchResult[];
+  candidatesScanned: number;
+}
+
 export interface CommentsListData {
   comments: Comment[];
   pagination: Pagination;

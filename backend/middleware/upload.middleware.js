@@ -31,6 +31,17 @@ export const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
 });
 
+// ── In-memory upload for AI Match search ───────────────────────────────
+// The "search by photo" flow never persists the uploaded image — only its
+// embedding is computed and used for that one request (see
+// aiMatch.controller.js) — so there's no need to ever write it to disk or
+// Cloudinary. 10MB matches the AI service's own limit and the frontend copy.
+export const uploadMemory = multer({
+  storage: multer.memoryStorage(),
+  fileFilter,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
+});
+
 // ── Content-based verification ──────────────────────────────────────────
 // multer's fileFilter above only sees the client-supplied extension and
 // mimetype header, both of which are trivial to spoof (e.g. rename a
@@ -48,7 +59,10 @@ const isValidWebp = (buffer) =>
   buffer.toString('ascii', 0, 4) === 'RIFF' &&
   buffer.toString('ascii', 8, 12) === 'WEBP';
 
-const matchesSignature = (buffer) =>
+// Exported (not just used internally) so aiMatch.controller.js can run the
+// same real-content check against an in-memory buffer, since that flow has
+// no disk file for verifyImageSignature below to open.
+export const matchesSignature = (buffer) =>
   SIGNATURES.some(
     (sig) =>
       buffer.length >= sig.bytes.length &&

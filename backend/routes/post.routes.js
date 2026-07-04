@@ -15,11 +15,19 @@ import {
 } from '../controllers/comment.controller.js';
 import { toggleLike } from '../controllers/like.controller.js';
 import { toggleSave } from '../controllers/save.controller.js';
+import { searchByPhoto } from '../controllers/aiMatch.controller.js';
 import { createPostValidator, updatePostValidator } from '../validators/post.validator.js';
 import { protect } from '../middleware/auth.middleware.js';
-import { upload, verifyImageSignature } from '../middleware/upload.middleware.js';
+import { upload, uploadMemory, verifyImageSignature } from '../middleware/upload.middleware.js';
 
 const router = express.Router();
+
+// AI Match — upload a photo, get back the closest Lost/Found posts by
+// visual similarity. Public (no login required): someone who just found a
+// cat on the street should be able to search before creating an account.
+// Placed above '/:id' only for readability; Express routes by method+path
+// so there's no actual conflict.
+router.post('/ai-match', uploadMemory.single('photo'), searchByPhoto);
 
 // Posts 
 router.get('/',    getPosts);
