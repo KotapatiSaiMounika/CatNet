@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { CatCard } from "../components/cards/CatCard";
 import { PageHero } from "../components/sections/PageHero";
-import { getPosts } from "@/lib/posts";
+import { postsApi } from "@/lib/posts";
 
 export const Route = createFileRoute("/lost")({
   head: () => ({
@@ -49,7 +49,7 @@ function LostCats() {
         }
         description="Browse cats reported missing in your area. Every set of eyes brings someone closer to home."
       >
-        <div className="mx-auto flex max-w-2xl items-center gap-2 rounded-full bg-white p-2 shadow-soft">
+        <div className="mx-auto flex max-w-2xl items-center gap-2 rounded-full bg-card p-2 shadow-soft">
           <Search className="ml-3 h-4 w-4 text-muted-foreground" />
           <input
             placeholder="Search by name, neighborhood, or breed…"
@@ -63,7 +63,7 @@ function LostCats() {
 
       <section className="mx-auto max-w-7xl px-6 pb-24">
         <div className="mb-10 flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-bold shadow-soft">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1.5 text-xs font-bold shadow-soft">
             <SlidersHorizontal className="h-3.5 w-3.5" />
             Filters
           </span>
@@ -71,7 +71,7 @@ function LostCats() {
           {filters.map((f) => (
             <button
               key={f.label}
-              className="rounded-full bg-white/70 px-4 py-1.5 text-xs font-semibold text-foreground shadow-soft hover:bg-white"
+              className="rounded-full bg-card/70 px-4 py-1.5 text-xs font-semibold text-foreground shadow-soft hover:bg-card"
             >
               <span className="mr-1.5">{f.icon}</span>
               {f.label}

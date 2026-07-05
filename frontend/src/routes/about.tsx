@@ -36,8 +36,8 @@ function About() {
             { icon: Sparkles, title: "Tech", text: "Gentle AI tuned for fur patterns, not faces." },
             { icon: ShieldCheck, title: "Safety", text: "Verified reunions and protected privacy." },
           ].map((v) => (
-            <div key={v.title} className="rounded-3xl bg-white/85 p-6 shadow-card hover-lift">
-              <div className="grid h-12 w-12 place-items-center rounded-2xl bg-pink-100">
+            <div key={v.title} className="rounded-3xl bg-card/85 p-6 shadow-card hover-lift">
+              <div className="grid h-12 w-12 place-items-center rounded-2xl bg-pink-100 dark:bg-pink-400/20">
                 <v.icon className="h-5 w-5 text-foreground/80" />
               </div>
               <h3 className="mt-4 font-display text-xl font-bold">{v.title}</h3>
@@ -49,7 +49,7 @@ function About() {
 
       <section className="mx-auto max-w-5xl px-6 pb-24">
         <div className="rounded-3xl gradient-soft p-10 text-center shadow-soft">
-          <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-white/90 shadow-soft">
+          <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-card/90 shadow-soft">
             <CatLogo size={56} />
           </div>
           <h2 className="mt-5 font-display text-3xl font-bold md:text-4xl">

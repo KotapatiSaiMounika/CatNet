@@ -10,19 +10,29 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as LostRouteImport } from './routes/lost'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as FoundRouteImport } from './routes/found'
+import { Route as CreatePostRouteImport } from './routes/create-post'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as AiMatchRouteImport } from './routes/ai-match'
 import { Route as AdoptionRouteImport } from './routes/adoption'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProfileUserIdRouteImport } from './routes/profile.$userId'
+import { Route as PostsPostIdRouteImport } from './routes/posts.$postId'
+import { Route as EditPostPostIdRouteImport } from './routes/edit-post.$postId'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MapRoute = MapRouteImport.update({
@@ -43,6 +53,11 @@ const LoginRoute = LoginRouteImport.update({
 const FoundRoute = FoundRouteImport.update({
   id: '/found',
   path: '/found',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CreatePostRoute = CreatePostRouteImport.update({
+  id: '/create-post',
+  path: '/create-post',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CommunityRoute = CommunityRouteImport.update({
@@ -70,6 +85,21 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileUserIdRoute = ProfileUserIdRouteImport.update({
+  id: '/profile/$userId',
+  path: '/profile/$userId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PostsPostIdRoute = PostsPostIdRouteImport.update({
+  id: '/posts/$postId',
+  path: '/posts/$postId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EditPostPostIdRoute = EditPostPostIdRouteImport.update({
+  id: '/edit-post/$postId',
+  path: '/edit-post/$postId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -77,11 +107,16 @@ export interface FileRoutesByFullPath {
   '/adoption': typeof AdoptionRoute
   '/ai-match': typeof AiMatchRoute
   '/community': typeof CommunityRoute
+  '/create-post': typeof CreatePostRoute
   '/found': typeof FoundRoute
   '/login': typeof LoginRoute
   '/lost': typeof LostRoute
   '/map': typeof MapRoute
+  '/notifications': typeof NotificationsRoute
   '/signup': typeof SignupRoute
+  '/edit-post/$postId': typeof EditPostPostIdRoute
+  '/posts/$postId': typeof PostsPostIdRoute
+  '/profile/$userId': typeof ProfileUserIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -89,11 +124,16 @@ export interface FileRoutesByTo {
   '/adoption': typeof AdoptionRoute
   '/ai-match': typeof AiMatchRoute
   '/community': typeof CommunityRoute
+  '/create-post': typeof CreatePostRoute
   '/found': typeof FoundRoute
   '/login': typeof LoginRoute
   '/lost': typeof LostRoute
   '/map': typeof MapRoute
+  '/notifications': typeof NotificationsRoute
   '/signup': typeof SignupRoute
+  '/edit-post/$postId': typeof EditPostPostIdRoute
+  '/posts/$postId': typeof PostsPostIdRoute
+  '/profile/$userId': typeof ProfileUserIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -102,11 +142,16 @@ export interface FileRoutesById {
   '/adoption': typeof AdoptionRoute
   '/ai-match': typeof AiMatchRoute
   '/community': typeof CommunityRoute
+  '/create-post': typeof CreatePostRoute
   '/found': typeof FoundRoute
   '/login': typeof LoginRoute
   '/lost': typeof LostRoute
   '/map': typeof MapRoute
+  '/notifications': typeof NotificationsRoute
   '/signup': typeof SignupRoute
+  '/edit-post/$postId': typeof EditPostPostIdRoute
+  '/posts/$postId': typeof PostsPostIdRoute
+  '/profile/$userId': typeof ProfileUserIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -116,11 +161,16 @@ export interface FileRouteTypes {
     | '/adoption'
     | '/ai-match'
     | '/community'
+    | '/create-post'
     | '/found'
     | '/login'
     | '/lost'
     | '/map'
+    | '/notifications'
     | '/signup'
+    | '/edit-post/$postId'
+    | '/posts/$postId'
+    | '/profile/$userId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -128,11 +178,16 @@ export interface FileRouteTypes {
     | '/adoption'
     | '/ai-match'
     | '/community'
+    | '/create-post'
     | '/found'
     | '/login'
     | '/lost'
     | '/map'
+    | '/notifications'
     | '/signup'
+    | '/edit-post/$postId'
+    | '/posts/$postId'
+    | '/profile/$userId'
   id:
     | '__root__'
     | '/'
@@ -140,11 +195,16 @@ export interface FileRouteTypes {
     | '/adoption'
     | '/ai-match'
     | '/community'
+    | '/create-post'
     | '/found'
     | '/login'
     | '/lost'
     | '/map'
+    | '/notifications'
     | '/signup'
+    | '/edit-post/$postId'
+    | '/posts/$postId'
+    | '/profile/$userId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -153,11 +213,16 @@ export interface RootRouteChildren {
   AdoptionRoute: typeof AdoptionRoute
   AiMatchRoute: typeof AiMatchRoute
   CommunityRoute: typeof CommunityRoute
+  CreatePostRoute: typeof CreatePostRoute
   FoundRoute: typeof FoundRoute
   LoginRoute: typeof LoginRoute
   LostRoute: typeof LostRoute
   MapRoute: typeof MapRoute
+  NotificationsRoute: typeof NotificationsRoute
   SignupRoute: typeof SignupRoute
+  EditPostPostIdRoute: typeof EditPostPostIdRoute
+  PostsPostIdRoute: typeof PostsPostIdRoute
+  ProfileUserIdRoute: typeof ProfileUserIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -167,6 +232,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/map': {
@@ -195,6 +267,13 @@ declare module '@tanstack/react-router' {
       path: '/found'
       fullPath: '/found'
       preLoaderRoute: typeof FoundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/create-post': {
+      id: '/create-post'
+      path: '/create-post'
+      fullPath: '/create-post'
+      preLoaderRoute: typeof CreatePostRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/community': {
@@ -232,6 +311,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile/$userId': {
+      id: '/profile/$userId'
+      path: '/profile/$userId'
+      fullPath: '/profile/$userId'
+      preLoaderRoute: typeof ProfileUserIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/posts/$postId': {
+      id: '/posts/$postId'
+      path: '/posts/$postId'
+      fullPath: '/posts/$postId'
+      preLoaderRoute: typeof PostsPostIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/edit-post/$postId': {
+      id: '/edit-post/$postId'
+      path: '/edit-post/$postId'
+      fullPath: '/edit-post/$postId'
+      preLoaderRoute: typeof EditPostPostIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -241,11 +341,16 @@ const rootRouteChildren: RootRouteChildren = {
   AdoptionRoute: AdoptionRoute,
   AiMatchRoute: AiMatchRoute,
   CommunityRoute: CommunityRoute,
+  CreatePostRoute: CreatePostRoute,
   FoundRoute: FoundRoute,
   LoginRoute: LoginRoute,
   LostRoute: LostRoute,
   MapRoute: MapRoute,
+  NotificationsRoute: NotificationsRoute,
   SignupRoute: SignupRoute,
+  EditPostPostIdRoute: EditPostPostIdRoute,
+  PostsPostIdRoute: PostsPostIdRoute,
+  ProfileUserIdRoute: ProfileUserIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
