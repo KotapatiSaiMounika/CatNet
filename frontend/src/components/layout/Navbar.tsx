@@ -1,5 +1,5 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Bell, LogOut, Moon, Search, Sun, User as UserIcon } from "lucide-react";
+import { Bell, LogOut, Moon, Sun, User as UserIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CatLogo } from "../sections/CatIllustrations";
 import { useAuth } from "@/context/AuthContext";
@@ -19,8 +19,6 @@ const links = [
   { to: "/found", label: "Found Cats" },
   { to: "/ai-match", label: "AI Match" },
   { to: "/adoption", label: "Adoption" },
-  { to: "/community", label: "Community" },
-  { to: "/map", label: "Map" },
   { to: "/about", label: "About" },
 ] as const;
 
@@ -92,13 +90,6 @@ export function Navbar() {
           </div>
 
           <div className="ml-auto flex items-center gap-1">
-            <button
-              aria-label="Search"
-              className="grid h-9 w-9 place-items-center rounded-full text-muted-foreground hover:bg-white/60 hover:text-foreground"
-            >
-              <Search className="h-4 w-4" />
-            </button>
-
             {isAuthenticated && (
               <Link
                 to="/notifications"

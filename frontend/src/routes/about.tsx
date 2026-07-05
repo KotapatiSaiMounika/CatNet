@@ -26,7 +26,7 @@ function About() {
             We're building <span className="text-gradient">a kinder internet</span><br />for cats.
           </>
         }
-        description="CatNet started as a weekend project to help find a neighbor's lost kitten. Today it's a global community using AI and kindness to reunite, rescue, and rehome cats everywhere."
+        description="CatNet started as a project to help find a neighbor's lost kitten. It's now a real platform using AI and kindness to help reunite, rescue, and rehome cats."
       />
 
       <section className="mx-auto max-w-5xl px-6 pb-16">
@@ -53,11 +53,12 @@ function About() {
             <CatLogo size={56} />
           </div>
           <h2 className="mt-5 font-display text-3xl font-bold md:text-4xl">
-            Built with love by 28 cat-people, in 12 cities.
+            Built solo, one cat at a time.
           </h2>
           <p className="mt-4 text-muted-foreground">
-            <Users className="-mt-0.5 mr-1 inline h-4 w-4" /> Designers, engineers,
-            vets, and volunteers — all united by one cause.
+            <Users className="-mt-0.5 mr-1 inline h-4 w-4" /> Designed, built, and
+            shipped end-to-end by one person who just really wants lost cats to
+            get home faster.
           </p>
         </div>
       </section>

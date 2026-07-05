@@ -100,6 +100,19 @@ const { data: adoptData } = useQuery({
     }),
 });
 
+const { data: foundData } = useQuery({
+  queryKey: ["home-found"],
+  queryFn: () =>
+    postsApi.getPosts({
+      category: "Found",
+      limit: 1,
+    }),
+});
+
+const lostCount = lostData?.pagination?.total ?? 0;
+const foundCount = foundData?.pagination?.total ?? 0;
+const adoptCount = adoptData?.pagination?.total ?? 0;
+
 const lostCats = lostData?.posts ?? [];
 const adoptCats = adoptData?.posts ?? [];
 
@@ -137,16 +150,16 @@ const adoptCats = adoptData?.posts ?? [];
           <div>
             <span className="inline-flex items-center gap-2 rounded-full bg-card/80 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-foreground shadow-soft">
               <Sparkles className="h-3.5 w-3.5 text-primary" />
-              AI-Powered · 98% match accuracy
+              AI-Powered Photo Matching
             </span>
             <h1 className="mt-5 font-display text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
               Helping every cat <br />
               <span className="text-gradient">find their way home.</span>
             </h1>
             <p className="mt-6 max-w-xl text-base text-muted-foreground md:text-lg">
-              CatNet uses gentle AI image matching, a kind global community, and
-              real-time alerts to reunite lost cats with their humans — and help
-              every stray find a forever home.
+              CatNet uses real AI image matching and real-time alerts to help
+              reunite lost cats with their humans — and help every stray find
+              a forever home.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
@@ -184,8 +197,10 @@ const adoptCats = adoptData?.posts ?? [];
                 ))}
               </div>
               <p className="text-sm text-muted-foreground">
-                <strong className="text-foreground">12,847</strong> cats reunited
-                this year
+                <strong className="text-foreground">
+                  {(lostCount + foundCount + adoptCount).toLocaleString()}
+                </strong>{" "}
+                active reports on CatNet right now
               </p>
             </div>
           </div>
@@ -194,46 +209,10 @@ const adoptCats = adoptData?.posts ?? [];
           <div className="relative">
             <div className="relative mx-auto aspect-square max-w-md">
               <HeroCat className="h-full w-full drop-shadow-2xl" />
-
-              {/* floating cards */}
-              <div className="absolute -left-4 top-1/4 rotate-[-6deg] rounded-2xl bg-card/95 p-3 shadow-float backdrop-blur animate-bounce-soft">
-                <div className="flex items-center gap-2">
-                  <div className="grid h-9 w-9 place-items-center rounded-xl bg-mint">
-                    <ShieldCheck className="h-4 w-4 text-emerald-700" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold">Match found!</p>
-                    <p className="text-[10px] text-muted-foreground">98% similarity</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="absolute -right-2 bottom-12 rotate-[5deg] rounded-2xl bg-card/95 p-3 shadow-float backdrop-blur">
-                <div className="flex items-center gap-2">
-                  <div className="grid h-9 w-9 place-items-center rounded-xl bg-lavender">
-                    <Bell className="h-4 w-4 text-purple-700" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold">2 new alerts</p>
-                    <p className="text-[10px] text-muted-foreground">Near Brooklyn</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="absolute -bottom-2 left-10 rotate-[-3deg] rounded-2xl bg-card/95 p-3 shadow-float backdrop-blur">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">🎉</span>
-                  <p className="text-xs font-bold">
-                    Mochi went home!
-                    <span className="block text-[10px] font-normal text-muted-foreground">
-                      2 minutes ago
-                    </span>
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         </div>
+
 
         {/* scroll indicator */}
         <div className="mt-16 flex justify-center">
@@ -251,13 +230,10 @@ const adoptCats = adoptData?.posts ?? [];
       {/* ---------------- STATS ---------------- */}
       <section className="bg-card/60 py-16 backdrop-blur">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
-            <Stat value={12847} label="Cats Reunited" />
-            <Stat value={8421} label="Cats Adopted" />
-            <Stat value={3206} label="Cats Rescued" />
-            <Stat value={4280} label="Volunteers" />
-            <Stat value={186} label="Communities" />
-            <Stat value={94} label="Success Rate" suffix="%" />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <Stat value={lostCount} label="Lost Cat Reports" />
+            <Stat value={foundCount} label="Found Cat Reports" />
+            <Stat value={adoptCount} label="Adoption Listings" />
           </div>
         </div>
       </section>
@@ -277,16 +253,17 @@ const adoptCats = adoptData?.posts ?? [];
               Upload a photo. Our gentle AI does the rest.
             </h2>
             <p className="mt-4 text-muted-foreground">
-              CatNet's matching engine compares fur patterns, ear shapes, eye
-              colors, and whisker counts to find the closest possible matches in
-              seconds — across thousands of nearby reports.
+              CatNet's matching engine reads the overall visual signature of a
+              cat photo — a MobileNetV2-based model, the same family of tech
+              behind reverse image search — and compares it against existing
+              Lost/Found reports to surface the closest visual matches.
             </p>
 
             <div className="mt-6 space-y-3">
               {[
                 { step: "1", text: "Upload missing cat photo" },
-                { step: "2", text: "AI scans nearby database" },
-                { step: "3", text: "Review top matches with confidence scores" },
+                { step: "2", text: "AI compares it against existing reports" },
+                { step: "3", text: "Review top matches with a similarity score" },
               ].map((s) => (
                 <div
                   key={s.step}
@@ -308,8 +285,11 @@ const adoptCats = adoptData?.posts ?? [];
             </Link>
           </div>
 
-          {/* AI demo visual */}
+          {/* AI demo visual — illustrative example, not live data */}
           <div className="relative rounded-3xl bg-card/80 p-6 shadow-card backdrop-blur">
+            <p className="mb-3 text-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Illustrative example
+            </p>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="relative aspect-square overflow-hidden rounded-2xl bg-gradient-to-br from-pink-200 to-orange-200">
                 <div className="absolute inset-0 grid place-items-center text-7xl">
@@ -326,7 +306,7 @@ const adoptCats = adoptData?.posts ?? [];
                   😺
                 </div>
                 <div className="absolute left-2 top-2 rounded-full bg-mint/90 px-2 py-0.5 text-[10px] font-bold text-emerald-900">
-                  98% match
+                  Example match
                 </div>
                 {/* similarity ring */}
                 <svg className="absolute right-2 bottom-2 h-12 w-12 -rotate-90">
@@ -338,7 +318,7 @@ const adoptCats = adoptData?.posts ?? [];
                     stroke="#5DBB7E"
                     strokeWidth="4"
                     fill="none"
-                    strokeDasharray={`${0.98 * 125.6} 125.6`}
+                    strokeDasharray={`${0.9 * 125.6} 125.6`}
                     strokeLinecap="round"
                   />
                 </svg>
@@ -347,19 +327,16 @@ const adoptCats = adoptData?.posts ?? [];
 
             <div className="mt-4 rounded-2xl bg-mint/30 p-4">
               <div className="flex items-center justify-between text-xs font-semibold">
-                <span>Fur pattern</span>
-                <span className="text-emerald-700">96%</span>
+                <span>Overall visual similarity</span>
+                <span className="text-emerald-700">example only</span>
               </div>
               <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-card/70">
-                <div className="h-full w-[96%] rounded-full gradient-primary" />
+                <div className="h-full w-[90%] rounded-full gradient-primary" />
               </div>
-              <div className="mt-3 flex items-center justify-between text-xs font-semibold">
-                <span>Eye color</span>
-                <span className="text-emerald-700">99%</span>
-              </div>
-              <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-card/70">
-                <div className="h-full w-[99%] rounded-full gradient-primary" />
-              </div>
+              <p className="mt-2 text-[11px] text-muted-foreground">
+                Real scores are computed live in AI Match from your uploaded
+                photo — this is just a mock-up to show what it looks like.
+              </p>
             </div>
 
             {/* peeking cat */}
@@ -391,42 +368,42 @@ const adoptCats = adoptData?.posts ?? [];
               {
                 icon: ScanSearch,
                 title: "AI Image Matching",
-                desc: "Compares fur patterns, eyes, and ears for accurate identification.",
+                desc: "Upload a photo and get matched against Lost/Found reports using real computer vision.",
                 bg: "bg-pink-100 dark:bg-pink-400/20",
                 emoji: "🔍",
               },
               {
                 icon: MapPin,
                 title: "Location Search",
-                desc: "Find cats and reports near you with a beautiful pastel map.",
+                desc: "Filter Lost, Found, and Adoption listings by location and keyword.",
                 bg: "bg-blue-100 dark:bg-blue-400/20",
                 emoji: "📍",
               },
               {
                 icon: Heart,
                 title: "Adoption",
-                desc: "Pinterest-style adoption gallery with personality matching.",
+                desc: "Browse adoptable cats with photos, descriptions, and direct contact info.",
                 bg: "bg-purple-100 dark:bg-purple-400/20",
                 emoji: "💖",
               },
               {
                 icon: Users,
-                title: "Volunteer Network",
-                desc: "Connect with rescuers, shelters, and feeding stations nearby.",
+                title: "Likes, Saves & Comments",
+                desc: "Engage with any post — like, save for later, and comment to help spread the word.",
                 bg: "bg-green-100 dark:bg-green-400/20",
                 emoji: "🤝",
               },
               {
                 icon: Bell,
                 title: "Real-time Alerts",
-                desc: "Push notifications the moment a possible match appears.",
+                desc: "Live notifications the moment someone likes or comments on your post.",
                 bg: "bg-orange-100 dark:bg-orange-400/20",
                 emoji: "🔔",
               },
               {
                 icon: ShieldCheck,
-                title: "Verified Reunions",
-                desc: "Owner verification keeps every reunion safe and sound.",
+                title: "Secure by Design",
+                desc: "JWT auth in httpOnly cookies, rate limiting, and file validation on every upload.",
                 bg: "bg-yellow-100 dark:bg-yellow-400/20",
                 emoji: "🛡️",
               },
@@ -467,7 +444,7 @@ const adoptCats = adoptData?.posts ?? [];
               { n: 1, t: "Upload Cat", e: "📸" },
               { n: 2, t: "AI Analysis", e: "🧠" },
               { n: 3, t: "Similar Matches", e: "💞" },
-              { n: 4, t: "Verify Owner", e: "🛡️" },
+              { n: 4, t: "Contact & Connect", e: "🛡️" },
               { n: 5, t: "Happy Reunion", e: "🏡" },
             ].map((s) => (
               <li
@@ -559,8 +536,8 @@ const adoptCats = adoptData?.posts ?? [];
             Every cat deserves a <span className="text-gradient">happy ending.</span>
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-muted-foreground">
-            Join 4,280 volunteers and a community of cat-lovers turning lost
-            stories into reunions.
+            Whether you've lost a cat, found one, or want to adopt — CatNet
+            helps you take the next step.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
@@ -570,10 +547,10 @@ const adoptCats = adoptData?.posts ?? [];
               Report a missing cat
             </Link>
             <Link
-              to="/community"
+              to="/adoption"
               className="btn-bounce rounded-full bg-card px-7 py-3.5 text-sm font-bold text-foreground shadow-soft"
             >
-              Join the community
+              Browse adoptable cats
             </Link>
           </div>
         </div>

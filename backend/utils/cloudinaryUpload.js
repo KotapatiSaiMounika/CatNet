@@ -20,10 +20,12 @@ export const uploadToCloudinary = async (localFilePath, folder = 'catnet') => {
 
     return result.secure_url;
   } catch (error) {
-    // Clean up temp file even on failure
-    if (fs.existsSync(localFilePath)) fs.unlinkSync(localFilePath);
-    throw new Error(`Cloudinary upload failed: ${error.message}`);
+  if (fs.existsSync(localFilePath)) {
+    fs.unlinkSync(localFilePath);
   }
+
+  throw error;
+}
 };
 
 /**
