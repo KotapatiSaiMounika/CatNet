@@ -111,9 +111,6 @@ feature extractor:
   level) and only pulled in explicitly for the match query — the raw vectors never reach
   the client.
 
-*Scaling note: at hackathon/demo scale this does an in-memory similarity scan. For a larger
-dataset, the natural next step is a vector index (MongoDB Atlas Vector Search, or
-pgvector/FAISS) — the rest of the system wouldn't need to change.*
 
 ## 🔐 Security
 
