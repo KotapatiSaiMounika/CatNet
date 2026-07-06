@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
@@ -62,7 +62,8 @@ function LostCats() {
       </PageHero>
 
       <section className="mx-auto max-w-7xl px-6 pb-24">
-        <div className="mb-10 flex flex-wrap items-center gap-2">
+        <div className="mb-10 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1.5 text-xs font-bold shadow-soft">
             <SlidersHorizontal className="h-3.5 w-3.5" />
             Filters
@@ -77,6 +78,15 @@ function LostCats() {
               {f.label}
             </button>
           ))}
+          </div>
+
+          <Link
+            to="/create-post"
+            search={{ category: "Lost" }}
+            className="btn-bounce inline-flex items-center gap-1.5 whitespace-nowrap rounded-full gradient-primary px-4 py-1.5 text-xs font-bold text-primary-foreground shadow-soft"
+          >
+            Report a lost cat
+          </Link>
         </div>
 
         {isLoading && (

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Search, Sparkles } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
@@ -55,6 +55,16 @@ function FoundCats() {
       </PageHero>
 
       <section className="mx-auto max-w-7xl px-6 pb-24">
+        <div className="mb-6 flex justify-end">
+          <Link
+            to="/create-post"
+            search={{ category: "Found" }}
+            className="btn-bounce inline-flex items-center gap-1.5 whitespace-nowrap rounded-full gradient-primary px-4 py-1.5 text-xs font-bold text-primary-foreground shadow-soft"
+          >
+            Report a found cat
+          </Link>
+        </div>
+
         {isLoading && (
           <div className="py-10 text-center">
             Loading...

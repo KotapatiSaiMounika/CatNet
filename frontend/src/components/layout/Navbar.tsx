@@ -1,5 +1,5 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Bell, LogOut, Moon, Sun, User as UserIcon } from "lucide-react";
+import { Bell, LogOut, Menu, Moon, Sun, User as UserIcon, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CatLogo } from "../sections/CatIllustrations";
 import { useAuth } from "@/context/AuthContext";
@@ -28,11 +28,17 @@ export function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const [dark, setDark] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = async () => {
     await logout();
     navigate({ to: "/" });
   };
+
+  // Close the mobile menu whenever the route changes
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -90,6 +96,16 @@ export function Navbar() {
           </div>
 
           <div className="ml-auto flex items-center gap-1">
+            {/* Mobile menu toggle — only visible below the lg breakpoint,
+                since the link list above is hidden there */}
+            <button
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              onClick={() => setMobileOpen((v) => !v)}
+              className="grid h-9 w-9 place-items-center rounded-full text-muted-foreground hover:bg-white/60 hover:text-foreground lg:hidden"
+            >
+              {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </button>
+
             {isAuthenticated && (
               <Link
                 to="/notifications"
@@ -156,6 +172,28 @@ export function Navbar() {
             )}
           </div>
         </nav>
+
+        {/* Mobile nav panel */}
+        {mobileOpen && (
+          <div className="glass mt-2 rounded-3xl p-2 shadow-soft lg:hidden">
+            {links.map((l) => {
+              const active = pathname === l.to;
+              return (
+                <Link
+                  key={l.to}
+                  to={l.to}
+                  className={`block rounded-2xl px-4 py-2.5 text-sm font-semibold transition-colors ${
+                    active
+                      ? "bg-primary/15 text-foreground"
+                      : "text-muted-foreground hover:bg-white/60 hover:text-foreground"
+                  }`}
+                >
+                  {l.label}
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </div>
     </header>
   );

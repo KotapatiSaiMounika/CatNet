@@ -164,13 +164,15 @@ const adoptCats = adoptData?.posts ?? [];
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                to="/lost"
+                to="/create-post"
+                search={{ category: "Lost" }}
                 className="btn-bounce inline-flex items-center gap-2 rounded-full gradient-primary px-6 py-3.5 text-sm font-bold text-primary-foreground shadow-soft"
               >
                 Report Missing Cat <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
-                to="/found"
+                to="/create-post"
+                search={{ category: "Found" }}
                 className="btn-bounce inline-flex items-center gap-2 rounded-full bg-card px-6 py-3.5 text-sm font-bold text-foreground shadow-soft"
               >
                 Report Found Cat
