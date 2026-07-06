@@ -1,6 +1,10 @@
 import ApiError from '../utils/ApiError.js';
 
 const errorHandler = (err, req, res, next) => {
+  // Log the full error server-side so it's actually visible while debugging —
+  // the client only ever gets a safe, generic message below.
+  console.error(`[${req.method} ${req.originalUrl}]`, err);
+
   let error = { ...err };
   error.message = err.message;
   error.statusCode = err.statusCode || 500;

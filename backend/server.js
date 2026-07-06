@@ -1,6 +1,14 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import dns from 'dns';
+// On some networks (broken/blocked IPv6 routing — common on certain campus
+// and home networks), Node tries IPv6 addresses first and hangs on every
+// attempt before ever falling back to IPv4, causing intermittent
+// ETIMEDOUT errors on outbound requests (e.g. to Cloudinary). Preferring
+// IPv4 first avoids that dead-end entirely.
+dns.setDefaultResultOrder('ipv4first');
+
 import http from 'http';
 import app from './app.js';
 import connectDB from './config/db.js';
