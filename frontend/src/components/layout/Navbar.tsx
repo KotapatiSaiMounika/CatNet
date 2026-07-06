@@ -1,5 +1,5 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Bell, LogOut, Menu, Moon, Sun, User as UserIcon, X } from "lucide-react";
+import { Bell, Bookmark, LogOut, Menu, Moon, Sun, User as UserIcon, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CatLogo } from "../sections/CatIllustrations";
 import { useAuth } from "@/context/AuthContext";
@@ -146,6 +146,12 @@ export function Navbar() {
                     <Link to="/profile/$userId" params={{ userId: user._id }}>
                       <UserIcon className="mr-2 h-4 w-4" />
                       My profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/saved">
+                      <Bookmark className="mr-2 h-4 w-4" />
+                      Saved posts
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleLogout}>
