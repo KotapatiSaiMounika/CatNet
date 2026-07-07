@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SavedRouteImport } from './routes/saved'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as LostRouteImport } from './routes/lost'
@@ -28,6 +29,11 @@ import { Route as EditPostPostIdRouteImport } from './routes/edit-post.$postId'
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SavedRoute = SavedRouteImport.update({
+  id: '/saved',
+  path: '/saved',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NotificationsRoute = NotificationsRouteImport.update({
@@ -113,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/lost': typeof LostRoute
   '/map': typeof MapRoute
   '/notifications': typeof NotificationsRoute
+  '/saved': typeof SavedRoute
   '/signup': typeof SignupRoute
   '/edit-post/$postId': typeof EditPostPostIdRoute
   '/posts/$postId': typeof PostsPostIdRoute
@@ -130,6 +137,7 @@ export interface FileRoutesByTo {
   '/lost': typeof LostRoute
   '/map': typeof MapRoute
   '/notifications': typeof NotificationsRoute
+  '/saved': typeof SavedRoute
   '/signup': typeof SignupRoute
   '/edit-post/$postId': typeof EditPostPostIdRoute
   '/posts/$postId': typeof PostsPostIdRoute
@@ -148,6 +156,7 @@ export interface FileRoutesById {
   '/lost': typeof LostRoute
   '/map': typeof MapRoute
   '/notifications': typeof NotificationsRoute
+  '/saved': typeof SavedRoute
   '/signup': typeof SignupRoute
   '/edit-post/$postId': typeof EditPostPostIdRoute
   '/posts/$postId': typeof PostsPostIdRoute
@@ -167,6 +176,7 @@ export interface FileRouteTypes {
     | '/lost'
     | '/map'
     | '/notifications'
+    | '/saved'
     | '/signup'
     | '/edit-post/$postId'
     | '/posts/$postId'
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/lost'
     | '/map'
     | '/notifications'
+    | '/saved'
     | '/signup'
     | '/edit-post/$postId'
     | '/posts/$postId'
@@ -201,6 +212,7 @@ export interface FileRouteTypes {
     | '/lost'
     | '/map'
     | '/notifications'
+    | '/saved'
     | '/signup'
     | '/edit-post/$postId'
     | '/posts/$postId'
@@ -219,6 +231,7 @@ export interface RootRouteChildren {
   LostRoute: typeof LostRoute
   MapRoute: typeof MapRoute
   NotificationsRoute: typeof NotificationsRoute
+  SavedRoute: typeof SavedRoute
   SignupRoute: typeof SignupRoute
   EditPostPostIdRoute: typeof EditPostPostIdRoute
   PostsPostIdRoute: typeof PostsPostIdRoute
@@ -232,6 +245,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/saved': {
+      id: '/saved'
+      path: '/saved'
+      fullPath: '/saved'
+      preLoaderRoute: typeof SavedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notifications': {
@@ -347,6 +367,7 @@ const rootRouteChildren: RootRouteChildren = {
   LostRoute: LostRoute,
   MapRoute: MapRoute,
   NotificationsRoute: NotificationsRoute,
+  SavedRoute: SavedRoute,
   SignupRoute: SignupRoute,
   EditPostPostIdRoute: EditPostPostIdRoute,
   PostsPostIdRoute: PostsPostIdRoute,
