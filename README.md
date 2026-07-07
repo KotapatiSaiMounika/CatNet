@@ -13,6 +13,7 @@ re-identification model, not a mock.
 </div>
 
 ---
+![CatNet homepage](./screenshots/homepage.png)
 
 ## 🎯 The Problem
 
